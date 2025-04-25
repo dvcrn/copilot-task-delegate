@@ -16,6 +16,10 @@
       {
         "command": "copilot-actions.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "copilot-actions.openTwoSumPrompt",
+        "title": "Copilot: Open Two Sum Prompt"
       }
     ]
   },
