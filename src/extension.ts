@@ -14,22 +14,49 @@ export function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "copilot-actions" is now active!'
   );
 
+  console.log('Registering copilot-actions_start-chat-agent tool');
   const disposable = vscode.lm.registerTool(
     "copilot-actions_start-chat-agent",
     {
       async invoke(options, token) {
+        vscode.window.showInformationMessage('[copilot-actions] Tool invoked with options: ' + JSON.stringify(options));
+        console.log('copilot-actions_start-chat-agent invoked with options:', options);
         const { prompt, mode } = options.input as StartChatAgentParams;
-        if (typeof prompt !== "string" || !["ask", "edit", "agent"].includes(mode)) {
+        vscode.window.showInformationMessage('[copilot-actions] Parsed parameters: ' + JSON.stringify({ prompt, mode }));
+        console.log('Parsed parameters:', { prompt, mode });
+        if (
+          typeof prompt !== "string" ||
+          !["ask", "edit", "agent"].includes(mode)
+        ) {
+          console.error('Invalid parameters for start-chat-agent tool:', { prompt, mode });
+          vscode.window.showErrorMessage('[copilot-actions] Failed to start chat: Invalid parameters for start-chat-agent tool.');
           throw new Error("Invalid parameters for start-chat-agent tool.");
         }
-        await vscode.commands.executeCommand("workbench.action.chat.open", { query: prompt, mode });
+        try {
+          await vscode.commands.executeCommand("workbench.action.chat.open", {
+            query: prompt,
+            mode,
+          });
+          vscode.window.showInformationMessage('[copilot-actions] Executed workbench.action.chat.open with: ' + JSON.stringify({ query: prompt, mode }));
+          console.log('Executed workbench.action.chat.open with:', { query: prompt, mode });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error('[copilot-actions] Error executing workbench.action.chat.open:', errorMessage);
+          vscode.window.showErrorMessage(
+            `[copilot-actions] Failed to start chat: ${errorMessage}`
+          );
+          throw new Error(`Failed to start chat session: ${errorMessage}`);
+        }
         return {
-          content: [new vscode.LanguageModelTextPart("Started Copilot chat session.")]
+          content: [
+            new vscode.LanguageModelTextPart("Started Copilot chat session."),
+          ],
         };
-      }
+      },
     }
   );
   context.subscriptions.push(disposable);
+  console.log('copilot-actions_start-chat-agent tool registered');
 }
 
 // This method is called when your extension is deactivated
