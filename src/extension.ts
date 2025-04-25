@@ -22,6 +22,13 @@ export interface IChatViewOpenOptions {
   mode?: ChatMode;
 }
 
+function getPromptArg(prompt: string | string[] | undefined, fallback: string): string {
+  if (Array.isArray(prompt)) {
+    return prompt[0] || fallback;
+  }
+  return prompt || fallback;
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -35,10 +42,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   const runCopilotDisposable = vscode.commands.registerCommand(
     "copilot-actions.run-copilot",
-    (prompt?: string) => {
+    (prompt?: string | string[]) => {
       vscode.commands.executeCommand(
         "workbench.action.chat.open",
-        prompt || DEFAULT_PROMPT
+        getPromptArg(prompt, DEFAULT_PROMPT)
       );
     }
   );
@@ -47,11 +54,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   const runCopilotAsk = vscode.commands.registerCommand(
     "copilot-actions.run-copilot-ask",
-    (prompt?: string) => {
+    (prompt?: string | string[]) => {
       const options: IChatViewOpenOptions = {
-        query: prompt || DEFAULT_PROMPT,
+        query: getPromptArg(prompt, DEFAULT_PROMPT),
         mode: ChatMode.Ask,
       };
+      console.log("[copilot-actions] run-copilot-ask options:", options);
+      vscode.window.showInformationMessage(`[copilot-actions] run-copilot-ask: ${JSON.stringify(options)}`);
       vscode.commands.executeCommand("workbench.action.chat.open", options);
     }
   );
@@ -59,11 +68,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   const runCopilotEdit = vscode.commands.registerCommand(
     "copilot-actions.run-copilot-edit",
-    (prompt?: string) => {
+    (prompt?: string | string[]) => {
       const options: IChatViewOpenOptions = {
-        query: prompt || DEFAULT_PROMPT,
+        query: getPromptArg(prompt, DEFAULT_PROMPT),
         mode: ChatMode.Edit,
       };
+      console.log("[copilot-actions] run-copilot-edit options:", options);
+      vscode.window.showInformationMessage(`[copilot-actions] run-copilot-edit: ${JSON.stringify(options)}`);
       vscode.commands.executeCommand("workbench.action.chat.open", options);
     }
   );
@@ -71,11 +82,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   const runCopilotAgent = vscode.commands.registerCommand(
     "copilot-actions.run-copilot-agent",
-    (prompt?: string) => {
+    (prompt?: string | string[]) => {
       const options: IChatViewOpenOptions = {
-        query: prompt || DEFAULT_PROMPT,
+        query: getPromptArg(prompt, DEFAULT_PROMPT),
         mode: ChatMode.Agent,
       };
+      console.log("[copilot-actions] run-copilot-agent options:", options);
+      vscode.window.showInformationMessage(`[copilot-actions] run-copilot-agent: ${JSON.stringify(options)}`);
       vscode.commands.executeCommand("workbench.action.chat.open", options);
     }
   );
