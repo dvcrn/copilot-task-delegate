@@ -9,7 +9,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguageModelTool:copilotActions.startChat"
+    "onLanguageModelTool:copilot-actions_start-chat-agent"
   ],
   "main": "./out/extension.js",
   "license": "AGPL-3.0-or-later AND LicenseRef-NON-COMMERCIAL",
@@ -21,10 +21,10 @@
           "copilot",
           "chat-actions"
         ],
-        "toolReferenceName": "startChatAgent",
+        "toolReferenceName": "copilotActionsStartChatAgent",
         "displayName": "Start Copilot Chat Session",
-        "modelDescription": "Start a new Copilot chat session in VS Code with a specific mode (ask, edit, agent) and initial prompt.",
-        "userDescription": "Start a new Copilot chat session with a given prompt and mode (ask, edit, agent).",
+        "modelDescription": "Starts a new Copilot chat session in VS Code asynchronously. Returns a session ID to track the operation. Use markdown for the prompt.",
+        "userDescription": "Starts a new Copilot chat session with a given prompt and mode (ask, edit, agent). Returns a session ID.",
         "canBeReferencedInPrompt": true,
         "icon": "$(comment-discussion)",
         "inputSchema": {
@@ -47,6 +47,67 @@
           "required": [
             "prompt",
             "mode"
+          ]
+        }
+      },
+      {
+        "name": "copilot-actions_complete_subaction",
+        "tags": [
+          "copilot",
+          "chat-actions",
+          "async"
+        ],
+        "toolReferenceName": "copilotActionsCompleteSubaction",
+        "displayName": "Complete Subaction",
+        "modelDescription": "Signals the completion or error of an asynchronous action initiated by another tool, using its session ID. Session ID is UUID.",
+        "userDescription": "Signals the completion of an asynchronous task.",
+        "canBeReferencedInPrompt": true,
+        "icon": "$(check)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "sessionId": {
+              "type": "string",
+              "description": "The session ID of the action to complete."
+            },
+            "result": {
+              "type": "string",
+              "description": "The successful result of the action (optional if error is provided)."
+            },
+            "error": {
+              "type": "string",
+              "description": "An error message if the action failed (optional if result is provided)."
+            }
+          },
+          "required": [
+            "sessionId"
+          ]
+        }
+      },
+      {
+        "name": "copilot-actions_check_action_status",
+        "tags": [
+          "copilot",
+          "chat-actions",
+          "async",
+          "status"
+        ],
+        "toolReferenceName": "copilotActionsCheckActionStatus",
+        "displayName": "Check Action Status",
+        "modelDescription": "Checks the status and retrieves the result/error of an asynchronous action using its session ID. Session ID is returned by the `copilot-actions_start-chat-agent` tool and is UUID.",
+        "userDescription": "Checks the status of an asynchronous action using its session ID.",
+        "canBeReferencedInPrompt": true,
+        "icon": "$(sync~spin)",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "sessionId": {
+              "type": "string",
+              "description": "The session ID of the action to check."
+            }
+          },
+          "required": [
+            "sessionId"
           ]
         }
       }
