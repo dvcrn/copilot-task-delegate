@@ -12,6 +12,7 @@
     "onLanguageModelTool:copilotActions.startChat"
   ],
   "main": "./out/extension.js",
+  "license": "AGPL-3.0-or-later AND LicenseRef-NON-COMMERCIAL",
   "contributes": {
     "languageModelTools": [
       {
@@ -35,11 +36,18 @@
             },
             "mode": {
               "type": "string",
-              "enum": ["ask", "edit", "agent"],
+              "enum": [
+                "ask",
+                "edit",
+                "agent"
+              ],
               "description": "The mode for the new chat session (ask, edit, or agent)."
             }
           },
-          "required": ["prompt", "mode"]
+          "required": [
+            "prompt",
+            "mode"
+          ]
         }
       }
     ]
@@ -50,7 +58,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "vsix": "npx -y vsce package"
   },
   "devDependencies": {
     "@types/vscode": "^1.99.0",
