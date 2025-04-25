@@ -15,29 +15,6 @@
   "contributes": {
     "languageModelTools": [
       {
-        "name": "copilotActions.startChat",
-        "displayName": "Start Copilot Chat Session",
-        "canBeReferencedInPrompt": true,
-        "modelDescription": {
-          "description": "Use this tool to programmatically start a new Copilot chat session in VS Code. You can specify the initial prompt and the chat mode (ask, edit, or agent).",
-          "input_schema": {
-            "type": "object",
-            "properties": {
-              "prompt": {
-                "type": "string",
-                "description": "The initial text prompt to place in the chat input."
-              },
-              "mode": {
-                "type": "string",
-                "enum": ["ask", "edit", "agent"],
-                "description": "The mode for the new chat session (ask, edit, or agent)."
-              }
-            },
-            "required": ["prompt", "mode"]
-          }
-        }
-      },
-      {
         "name": "copilot-actions_start-chat-agent",
         "tags": [
           "copilot",
