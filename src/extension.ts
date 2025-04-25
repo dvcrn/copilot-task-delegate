@@ -2,97 +2,98 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
-export enum ChatMode {
-  Ask = "ask",
-  Edit = "edit",
-  Agent = "agent",
+// Define the expected structure of parameters based on package.json schema
+interface StartChatParameters {
+  prompt: string;
+  mode: "ask" | "edit" | "agent";
 }
 
-export interface IChatViewOpenRequestEntry {
-  request: string;
-  response: string;
-}
-
-export interface IChatViewOpenOptions {
-  query: string;
-  isPartialQuery?: boolean;
-  toolIds?: string[];
-  previousRequests?: IChatViewOpenRequestEntry[];
-  attachScreenshot?: boolean;
-  mode?: ChatMode;
-}
-
-function getPromptArg(prompt: string | string[] | undefined, fallback: string): string {
-  if (Array.isArray(prompt)) {
-    return prompt[0] || fallback;
-  }
-  return prompt || fallback;
+interface StartChatAgentParams {
+  prompt: string;
+  mode: "ask" | "edit" | "agent";
 }
 
 // This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
   console.log(
     'Congratulations, your extension "copilot-actions" is now active!'
   );
 
-  const DEFAULT_PROMPT = "Default Prompt, Hello";
+  // Define the Language Model Tool implementation
+  const startChatTool: vscode.LanguageModelTool = {
+    name: "copilotActions.startChat", // Must match the name in package.json
+    description: "Starts a new VS Code Copilot chat session with a specific mode and prompt.", // Description for the tool
 
-  const runCopilotDisposable = vscode.commands.registerCommand(
-    "copilot-actions.run-copilot",
-    (prompt?: string | string[]) => {
-      vscode.commands.executeCommand(
-        "workbench.action.chat.open",
-        getPromptArg(prompt, DEFAULT_PROMPT)
+    // The core logic executed when the tool is invoked by an LLM
+    invoke: async (
+      parameters: unknown, // Parameters provided by the LLM, matching the input_schema
+      token: vscode.CancellationToken
+    ): Promise<StartChatResult> => {
+      // Validate and cast parameters based on the defined schema
+      const { prompt, mode } = parameters as StartChatParameters;
+
+      // Basic validation
+      if (
+        typeof prompt !== "string" ||
+        !["ask", "edit", "agent"].includes(mode)
+      ) {
+        console.error(
+          "[copilot-actions] Invalid parameters received:",
+          parameters
+        );
+        // Throwing an error signals failure to the LLM
+        throw new Error("Invalid parameters received for startChat tool.");
+      }
+
+      console.log(
+        `[copilot-actions] Tool invoked: mode='${mode}', prompt='${prompt}'`
       );
+
+      try {
+        // Execute the command to open the chat panel
+        await vscode.commands.executeCommand("workbench.action.chat.open", {
+          query: prompt,
+          mode: mode,
+        });
+        console.log("[copilot-actions] workbench.action.chat.open executed.");
+        // Return a success result object
+        return { message: "Chat session started successfully." };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        console.error(
+          `[copilot-actions] Error executing workbench.action.chat.open: ${errorMessage}`
+        );
+        vscode.window.showErrorMessage(
+          `[copilot-actions] Failed to start chat: ${errorMessage}`
+        );
+        // Throw an error to signal failure back to the invoking LLM
+        throw new Error(`Failed to start chat session: ${errorMessage}`);
+      }
+    },
+  };
+
+  // Register the tool with VS Code's Language Model API
+  const disposableStartChat = vscode.lm.registerTool(startChatTool);
+
+  const disposableStartChatAgent = vscode.lm.registerTool(
+    "copilot-actions_start-chat-agent",
+    {
+      async invoke(options, token) {
+        const { prompt, mode } = options.input as StartChatAgentParams;
+        if (typeof prompt !== "string" || !["ask", "edit", "agent"].includes(mode)) {
+          throw new Error("Invalid parameters for start-chat-agent tool.");
+        }
+        await vscode.commands.executeCommand("workbench.action.chat.open", { query: prompt, mode });
+        return {
+          content: [new vscode.LanguageModelTextPart("Started Copilot chat session.")]
+        };
+      }
     }
   );
 
-  context.subscriptions.push(runCopilotDisposable);
-
-  const runCopilotAsk = vscode.commands.registerCommand(
-    "copilot-actions.run-copilot-ask",
-    (prompt?: string | string[]) => {
-      const options: IChatViewOpenOptions = {
-        query: getPromptArg(prompt, DEFAULT_PROMPT),
-        mode: ChatMode.Ask,
-      };
-      console.log("[copilot-actions] run-copilot-ask options:", options);
-      vscode.window.showInformationMessage(`[copilot-actions] run-copilot-ask: ${JSON.stringify(options)}`);
-      vscode.commands.executeCommand("workbench.action.chat.open", options);
-    }
-  );
-  context.subscriptions.push(runCopilotAsk);
-
-  const runCopilotEdit = vscode.commands.registerCommand(
-    "copilot-actions.run-copilot-edit",
-    (prompt?: string | string[]) => {
-      const options: IChatViewOpenOptions = {
-        query: getPromptArg(prompt, DEFAULT_PROMPT),
-        mode: ChatMode.Edit,
-      };
-      console.log("[copilot-actions] run-copilot-edit options:", options);
-      vscode.window.showInformationMessage(`[copilot-actions] run-copilot-edit: ${JSON.stringify(options)}`);
-      vscode.commands.executeCommand("workbench.action.chat.open", options);
-    }
-  );
-  context.subscriptions.push(runCopilotEdit);
-
-  const runCopilotAgent = vscode.commands.registerCommand(
-    "copilot-actions.run-copilot-agent",
-    (prompt?: string | string[]) => {
-      const options: IChatViewOpenOptions = {
-        query: getPromptArg(prompt, DEFAULT_PROMPT),
-        mode: ChatMode.Agent,
-      };
-      console.log("[copilot-actions] run-copilot-agent options:", options);
-      vscode.window.showInformationMessage(`[copilot-actions] run-copilot-agent: ${JSON.stringify(options)}`);
-      vscode.commands.executeCommand("workbench.action.chat.open", options);
-    }
-  );
-  context.subscriptions.push(runCopilotAgent);
+  context.subscriptions.push(disposableStartChat);
+  context.subscriptions.push(disposableStartChatAgent);
 }
 
 // This method is called when your extension is deactivated
