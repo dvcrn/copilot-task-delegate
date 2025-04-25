@@ -18,8 +18,20 @@
         "title": "Hello World"
       },
       {
-        "command": "copilot-actions.openTwoSumPrompt",
-        "title": "Copilot: Open Two Sum Prompt"
+        "command": "copilot-actions.run-copilot",
+        "title": "Copilot: Run Copilot with Prompt"
+      },
+      {
+        "command": "copilot-actions.run-copilot-ask",
+        "title": "Copilot: Run Copilot (Ask Mode)"
+      },
+      {
+        "command": "copilot-actions.run-copilot-edit",
+        "title": "Copilot: Run Copilot (Edit Mode)"
+      },
+      {
+        "command": "copilot-actions.run-copilot-agent",
+        "title": "Copilot: Run Copilot (Agent Mode)"
       }
     ]
   },
