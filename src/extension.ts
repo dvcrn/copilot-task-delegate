@@ -3,9 +3,9 @@
 import * as vscode from "vscode";
 
 export enum ChatMode {
-  Ask = 'ask',
-  Edit = 'edit',
-  Agent = 'agent'
+  Ask = "ask",
+  Edit = "edit",
+  Agent = "agent",
 }
 
 export interface IChatViewOpenRequestEntry {
@@ -31,6 +31,8 @@ export function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "copilot-actions" is now active!'
   );
 
+  const DEFAULT_PROMPT = "Default Prompt, Hello";
+
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
@@ -48,10 +50,9 @@ export function activate(context: vscode.ExtensionContext) {
   const runCopilotDisposable = vscode.commands.registerCommand(
     "copilot-actions.run-copilot",
     (prompt?: string) => {
-      const defaultPrompt = "write two sum with test cases in javascript";
       vscode.commands.executeCommand(
         "workbench.action.chat.open",
-        prompt || defaultPrompt
+        prompt || DEFAULT_PROMPT
       );
     }
   );
@@ -62,7 +63,7 @@ export function activate(context: vscode.ExtensionContext) {
     "copilot-actions.run-copilot-ask",
     (prompt?: string) => {
       const options: IChatViewOpenOptions = {
-        query: prompt || "",
+        query: prompt || DEFAULT_PROMPT,
         mode: ChatMode.Ask,
       };
       vscode.commands.executeCommand("workbench.action.chat.open", options);
@@ -74,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
     "copilot-actions.run-copilot-edit",
     (prompt?: string) => {
       const options: IChatViewOpenOptions = {
-        query: prompt || "",
+        query: prompt || DEFAULT_PROMPT,
         mode: ChatMode.Edit,
       };
       vscode.commands.executeCommand("workbench.action.chat.open", options);
@@ -86,7 +87,7 @@ export function activate(context: vscode.ExtensionContext) {
     "copilot-actions.run-copilot-agent",
     (prompt?: string) => {
       const options: IChatViewOpenOptions = {
-        query: prompt || "",
+        query: prompt || DEFAULT_PROMPT,
         mode: ChatMode.Agent,
       };
       vscode.commands.executeCommand("workbench.action.chat.open", options);
