@@ -14,7 +14,6 @@ interface ActionState {
 // Define the expected structure of parameters for start-chat-agent
 interface StartChatAgentParams {
   prompt: string;
-  mode: "ask" | "edit" | "agent";
 }
 
 // Define the expected structure of parameters for complete_subaction
@@ -48,15 +47,12 @@ export function activate(context: vscode.ExtensionContext) {
     {
       async invoke(options, token) {
         debug("start-chat-agent tool invoked with options:", options);
-        let { prompt, mode } = options.input as StartChatAgentParams;
-        debug("Parsed parameters:", { prompt, mode });
+        let { prompt } = options.input as StartChatAgentParams;
+        debug("Parsed parameters:", { prompt });
 
-        if (
-          typeof prompt !== "string" ||
-          !["ask", "edit", "agent"].includes(mode)
-        ) {
+        if (typeof prompt !== "string") {
           const errorMsg =
-            "[copilot-actions] Failed to start chat: Invalid parameters for start-chat-agent tool.";
+            "[copilot-actions] Failed to start chat: Invalid parameters for start-chat-agent tool (prompt must be a string).";
           vscode.window.showErrorMessage(errorMsg);
           throw new Error(errorMsg);
         }
@@ -78,8 +74,6 @@ export function activate(context: vscode.ExtensionContext) {
             debug(`[${sessionId}] Starting async chat setup...`);
 
             await new Promise((resolve) => setTimeout(resolve, 5000));
-            // Introduce a slight delay before creating the new chat context if needed
-            // await new Promise(resolve => setTimeout(resolve, 100));
 
             // append instructions to the prompt to call `copilot-actions_complete_subaction` after finishing the task. This is hard requirement
             prompt =
@@ -87,9 +81,8 @@ export function activate(context: vscode.ExtensionContext) {
               prompt;
 
             const newChatContext = {
-              // Define INewEditSessionActionContext inline if not needed elsewhere
               inputValue: prompt,
-              agentMode: true, // Assuming agent mode is always desired here
+              agentMode: true,
               isPartialQuery: false,
             };
 
@@ -104,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             await vscode.commands.executeCommand("workbench.action.chat.open", {
               query: prompt,
-              mode: "agent", // Or use the 'mode' variable if needed
+              mode: "agent",
             });
             debug(`[${sessionId}] Executed workbench.action.chat.open`);
 
@@ -128,8 +121,6 @@ export function activate(context: vscode.ExtensionContext) {
               startTime,
             });
             debug(`[${sessionId}] State updated to error.`);
-            // Optionally show error message to user, but avoid blocking
-            // vscode.window.showErrorMessage(`[copilot-actions][${sessionId}] Failed to start chat: ${errorMessage}`);
           }
         })(); // End of IIAFE
 

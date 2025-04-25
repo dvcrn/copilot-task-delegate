@@ -22,9 +22,9 @@
           "chat-actions"
         ],
         "toolReferenceName": "copilotActionsStartChatAgent",
-        "displayName": "Start Copilot Chat Session",
-        "modelDescription": "Starts a new Copilot chat session in VS Code asynchronously. Returns a session ID to track the operation. Use markdown for the prompt.",
-        "userDescription": "Starts a new Copilot chat session with a given prompt and mode (ask, edit, agent). Returns a session ID.",
+        "displayName": "Start Copilot Agent Session",
+        "modelDescription": "Starts a new Copilot agent session in VS Code asynchronously with a given prompt. Returns a session ID to track the operation. Use markdown for the prompt.",
+        "userDescription": "Starts a new Copilot agent session with a given prompt. Returns a session ID.",
         "canBeReferencedInPrompt": true,
         "icon": "$(comment-discussion)",
         "inputSchema": {
@@ -33,20 +33,10 @@
             "prompt": {
               "type": "string",
               "description": "The initial text prompt to place in the chat input."
-            },
-            "mode": {
-              "type": "string",
-              "enum": [
-                "ask",
-                "edit",
-                "agent"
-              ],
-              "description": "The mode for the new chat session (ask, edit, or agent)."
             }
           },
           "required": [
-            "prompt",
-            "mode"
+            "prompt"
           ]
         }
       },
