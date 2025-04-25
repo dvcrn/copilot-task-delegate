@@ -2,7 +2,7 @@
   "name": "copilot-task-delegate",
   "displayName": "Copilot Task Delegate",
   "description": "(Experimental) Enables Copilot agents to asynchronously delegate tasks to other Copilot agents.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "dvcrn",
   "author": {
     "name": "David Mohl",
