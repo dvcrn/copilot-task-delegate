@@ -14,10 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "copilot-actions.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "copilot-actions.run-copilot",
         "title": "Copilot: Run Copilot with Prompt"
       },
