@@ -23,14 +23,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguageModelTool:copilot-actions_start-chat-agent"
+    "onLanguageModelTool:copilot-task-delegate_start"
   ],
   "main": "./out/extension.js",
   "license": "AGPL-3.0-or-later",
   "contributes": {
     "languageModelTools": [
       {
-        "name": "copilot-actions_start-chat-agent",
+        "name": "copilot-task-delegate_start",
         "tags": [
           "copilot",
           "chat-actions"
@@ -55,7 +55,7 @@
         }
       },
       {
-        "name": "copilot-actions_complete_subaction",
+        "name": "copilot-task-delegate_complete",
         "tags": [
           "copilot",
           "chat-actions",
@@ -89,7 +89,7 @@
         }
       },
       {
-        "name": "copilot-actions_check_action_status",
+        "name": "copilot-task-delegate_status",
         "tags": [
           "copilot",
           "chat-actions",
@@ -98,7 +98,7 @@
         ],
         "toolReferenceName": "copilotActionsCheckActionStatus",
         "displayName": "Check Action Status",
-        "modelDescription": "Checks the status and retrieves the result/error of an asynchronous action using its session ID. Session ID is returned by the `copilot-actions_start-chat-agent` tool and is UUID.",
+        "modelDescription": "Checks the status and retrieves the result/error of an asynchronous action using its session ID. Session ID is returned by the `copilot-task-delegate_start` tool and is UUID.",
         "userDescription": "Checks the status of an asynchronous action using its session ID.",
         "canBeReferencedInPrompt": true,
         "icon": "$(sync~spin)",
