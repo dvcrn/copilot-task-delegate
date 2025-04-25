@@ -1,7 +1,14 @@
 {
-  "name": "copilot-actions",
-  "displayName": "copilot-actions",
+  "name": "vscode-copilot-actions-extension",
+  "displayName": "vscode-copilot-actions-extension",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dvcrn/vscode-copilot-actions-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dvcrn/vscode-copilot-actions-extension/issues"
+  },
   "engines": {
     "vscode": "^1.99.0"
   },
